@@ -1,4 +1,5 @@
 from crispy_forms.utils import render_crispy_form
+from django.contrib.auth import login
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.context_processors import csrf
@@ -15,7 +16,10 @@ def index(request):
     form = UniversityForm(request.POST)
     if form.is_valid():
         user = form.save()
-        return HttpResponse("Hi")
+        login(request, user)
+        template = render(request, "profile.html")
+        template["Hx-Push"] = "/profile/"
+        return template
 
     # https://django-crispy-forms.readthedocs.io/en/latest/crispy_tag_forms.html#ajax-validation-recipe
     ctx = {}
