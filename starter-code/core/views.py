@@ -1,6 +1,9 @@
 from django.shortcuts import render
 
+from .forms import UniversityForm
+
+
 # Create your views here.
 def index(request):
-    context = {}
-    return render(request, 'index.html', context)
+    context = {"form": UniversityForm()}
+    return render(request, "index.html", context)
