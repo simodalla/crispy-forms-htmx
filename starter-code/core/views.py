@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.context_processors import csrf
 
+from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 from crispy_forms.utils import render_crispy_form
 
 from .forms import UniversityForm
@@ -26,3 +27,13 @@ def index(request):
     context.update(csrf(request))
     form_html = render_crispy_form(form, context=context)
     return HttpResponse(form_html)
+
+
+def check_username(request):
+    form = UniversityForm(request.GET)
+    return HttpResponse(as_crispy_field(form["username"]))
+
+
+def check_subject(request):
+    form = UniversityForm(request.GET)
+    return HttpResponse(as_crispy_field(form["subject"]))

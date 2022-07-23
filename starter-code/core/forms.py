@@ -10,7 +10,16 @@ from .models import User
 
 
 class UniversityForm(forms.ModelForm):
-    subject = forms.ChoiceField(choices=User.Subjects.choices)
+    subject = forms.ChoiceField(
+        choices=User.Subjects.choices,
+        widget=forms.Select(
+            attrs={
+                "hx-get": reverse_lazy("check-subject"),
+                "hx-trigger": "change",
+                "hx-target": "#div_id_subject",
+            }
+        ),
+    )
     date_of_birth = forms.DateField(
         widget=forms.DateInput(
             attrs={
@@ -23,7 +32,16 @@ class UniversityForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("username", "password", "date_of_birth", "subject")
-        widgets = {"password": forms.PasswordInput()}
+        widgets = {
+            "password": forms.PasswordInput(),
+            "username": forms.TextInput(
+                attrs={
+                    "hx-get": reverse_lazy("check-username"),
+                    "hx-trigger": "keyup changed",
+                    "hx-target": "#div_id_username",
+                }
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,3 +69,9 @@ class UniversityForm(forms.ModelForm):
         if len(username) <= 3:
             raise forms.ValidationError("Username is too short")
         return username
+
+    def clean_subject(self):
+        subject = self.cleaned_data["subject"]
+        if User.objects.filter(subject=subject).count() >= 3:
+            raise forms.ValidationError("There are no spaces on this course")
+        return subject
