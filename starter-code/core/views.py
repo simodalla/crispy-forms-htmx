@@ -31,9 +31,17 @@ def index(request):
 
 def check_username(request):
     form = UniversityForm(request.GET)
-    return HttpResponse(as_crispy_field(form["username"]))
+    context = {
+        "field": as_crispy_field(form["username"]),
+        "valid": not form["username"].errors,
+    }
+    return render(request, "partials/field.html", context)
 
 
 def check_subject(request):
     form = UniversityForm(request.GET)
-    return HttpResponse(as_crispy_field(form["subject"]))
+    context = {
+        "field": as_crispy_field(form["subject"]),
+        "valid": not form["subject"].errors,
+    }
+    return render(request, "partials/field.html", context)
